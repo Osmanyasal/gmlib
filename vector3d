@@ -54,13 +54,12 @@ namespace gm // graphics math
             return std::sqrt(std::pow(xyz[0], 2) + std::pow(xyz[1], 2) + std::pow(xyz[2], 2));
         }
 
-        inline Vector3D &normalize()
+        inline Vector3D normalize() const
         {
             double mag = magnitude();
-            xyz[0] = xyz[0] / mag;
-            xyz[1] = xyz[1] / mag;
-            xyz[2] = xyz[2] / mag;
-            return *this;
+            return Vector3D(xyz[0] / mag,
+                            xyz[1] / mag,
+                            xyz[2] / mag);
         }
 
     private:
