@@ -1,0 +1,97 @@
+#ifndef GM_VECTOR3D
+#define GM_VECTOR3D
+
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+
+namespace gm // graphics math
+{
+    struct Vector3D
+    {
+        inline Vector3D()
+        {
+            xyz[0] = 0;
+            xyz[1] = 0;
+            xyz[2] = 0;
+        }
+
+        inline Vector3D(double x, double y, double z)
+        {
+            xyz[0] = x;
+            xyz[1] = y;
+            xyz[2] = z;
+        }
+
+        inline double operator[](short i) const
+        {
+            return xyz[i];
+        }
+
+        inline double &operator[](short i)
+        {
+            return xyz[i];
+        }
+
+        inline Vector3D &operator*(double scalar)
+        {
+            xyz[0] = xyz[0] * scalar;
+            xyz[1] = xyz[1] * scalar;
+            xyz[2] = xyz[2] * scalar;
+            return *this;
+        }
+
+        inline Vector3D &operator/(double scalar)
+        {
+            xyz[0] = xyz[0] / scalar;
+            xyz[1] = xyz[1] / scalar;
+            xyz[2] = xyz[2] / scalar;
+            return *this;
+        }
+
+        inline float magnitude() const
+        {
+            return std::sqrt(std::pow(xyz[0], 2) + std::pow(xyz[1], 2) + std::pow(xyz[2], 2));
+        }
+
+        inline Vector3D &normalize()
+        {
+            double mag = magnitude();
+            xyz[0] = xyz[0] / mag;
+            xyz[1] = xyz[1] / mag;
+            xyz[2] = xyz[2] / mag;
+            return *this;
+        }
+
+    private:
+        double xyz[3];
+    };
+
+    static inline Vector3D operator+(const Vector3D &first, const Vector3D &second)
+    {
+        return Vector3D(first[0] + second[0], first[1] + second[1], first[2] + second[2]);
+    }
+    static inline Vector3D operator-(const Vector3D &first, const Vector3D &second)
+    {
+        return Vector3D(first[0] - second[0], first[1] - second[1], first[2] - second[2]);
+    }
+
+    // static inline Vector3D &operator*(double scalar,Vector3D& vector)
+    // {
+    //     vector[0] = vector[0] * scalar;
+    //     vector[1] = vector[1] * scalar;
+    //     vector[2] = vector[2] * scalar;
+    //     return vector;
+    // }
+
+    static inline std::ostream &operator<<(std::ostream &out, const Vector3D &vector3d)
+    {
+        auto orig = out.precision();
+        out.precision(7);
+        out << "vector3d(" << vector3d[0] << ", " << vector3d[1] << ", " << vector3d[2] << ")";
+        std::setprecision(orig);
+        return out;
+    }
+}
+
+#endif
