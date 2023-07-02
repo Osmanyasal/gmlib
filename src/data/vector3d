@@ -7,7 +7,7 @@
 
 namespace gm // graphics math
 {   
-    struct Vector3D;
+    struct Vector3D; 
     static inline std::ostream &operator<<(std::ostream &out, const Vector3D &vector3d);
 
     struct Vector3D
