@@ -60,6 +60,7 @@
         "__nullptr": "cpp",
         "vector3d": "cpp",
         "iomanip": "cpp",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "matrix3d": "cpp"
     }
 }

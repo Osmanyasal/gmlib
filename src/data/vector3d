@@ -1,0 +1,120 @@
+#ifndef GM_VECTOR3D
+#define GM_VECTOR3D
+
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+
+namespace gm // graphics math
+{   
+    struct Vector3D;
+    static inline std::ostream &operator<<(std::ostream &out, const Vector3D &vector3d);
+
+    struct Vector3D
+    {
+        inline Vector3D()
+        {
+            xyz[0] = 0;
+            xyz[1] = 0;
+            xyz[2] = 0;
+        }
+
+        inline Vector3D(double x, double y, double z)
+        {
+            xyz[0] = x;
+            xyz[1] = y;
+            xyz[2] = z;
+        }
+
+        inline double operator[](short i) const
+        {
+            return xyz[i];
+        }
+
+        inline bool operator==(const Vector3D &out) const
+        {
+            return xyz[0] == out[0] && xyz[1] == out[1] && xyz[2] == out[2];
+        }
+
+        inline double &operator[](short i)
+        {
+            return xyz[i];
+        }
+
+        inline Vector3D operator*(double scalar) const
+        {
+            return Vector3D(xyz[0] * scalar,
+                            xyz[1] * scalar,
+                            xyz[2] * scalar);
+        }
+
+        inline Vector3D operator/(double scalar) const
+        {
+            return Vector3D(xyz[0] / scalar,
+                            xyz[1] / scalar,
+                            xyz[2] / scalar);
+        }
+
+        inline Vector3D operator+(const Vector3D &other) const
+        {
+            return Vector3D(xyz[0] + other[0], xyz[1] + other[1], xyz[2] + other[2]);
+        }
+
+        inline Vector3D operator-(const Vector3D &other) const
+        {
+            return Vector3D(xyz[0] - other[0], xyz[1] - other[1], xyz[2] - other[2]);
+        }
+
+        static inline double dot(const Vector3D &first, const Vector3D &second)
+        {
+            return first[0] * second[0] + first[1] * second[1] + first[2] * second[2];
+        }
+
+        static inline Vector3D cross(const Vector3D &first, const Vector3D &second)
+        {
+            return Vector3D(first[1] * second[2] - first[2] * second[1],
+                            first[2] * second[0] - first[0] * second[2],
+                            first[0] * second[1] - first[1] * second[0]);
+        }
+
+        // Projection of first onto second vector.
+        static inline Vector3D project(const Vector3D &first, const Vector3D &second)
+        {
+            return (second * (dot(first, second) / dot(second, second)));
+        }
+
+        // Reject of first onto second vector.
+        static inline Vector3D reject(const Vector3D &first, const Vector3D &second)
+        {
+            return first - (second * (dot(first, second) / dot(second, second)));
+        }
+
+        inline float magnitude() const
+        {
+            return std::sqrt(std::pow(xyz[0], 2) + std::pow(xyz[1], 2) + std::pow(xyz[2], 2));
+        }
+
+        inline Vector3D normalize() const
+        {
+            double mag = magnitude();
+            return Vector3D(xyz[0] / mag,
+                            xyz[1] / mag,
+                            xyz[2] / mag);
+        }
+
+    private:
+        double xyz[3];
+    };
+
+    static inline std::ostream &operator<<(std::ostream &out, const Vector3D &vector3d)
+    {
+        auto orig = out.precision();
+        out.precision(7);
+        out << "vector3d(" << vector3d[0] << ", " << vector3d[1] << ", " << vector3d[2] << ")";
+        std::setprecision(orig);
+        return out;
+    }
+
+}
+
+#endif

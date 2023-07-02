@@ -1,0 +1,158 @@
+#ifndef GM_MATRIX3D
+#define GM_MATRIX3D
+
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+#include "vector3d"
+
+namespace gm
+{
+    struct Matrix3D
+    {
+        // generate Identity matrix of val
+        inline Matrix3D(double val)
+        {
+
+            map[0][0] = val;
+            map[0][1] = 0;
+            map[0][2] = 0;
+
+            map[1][0] = 0;
+            map[1][1] = val;
+            map[1][2] = 0;
+
+            map[2][0] = 0;
+            map[2][1] = 0;
+            map[2][2] = val;
+        }
+
+        inline Matrix3D(gm::Vector3D &vec1, gm::Vector3D &vec2, gm::Vector3D &vec3)
+        {
+
+            map[0][0] = vec1[0];
+            map[0][1] = vec1[1];
+            map[0][2] = vec1[2];
+
+            map[1][0] = vec2[0];
+            map[1][1] = vec2[1];
+            map[1][2] = vec2[2];
+
+            map[2][0] = vec3[0];
+            map[2][1] = vec3[1];
+            map[2][2] = vec3[2];
+        }
+        inline Matrix3D(double a00, double a01, double a02, double b10, double b11, double b12, double c20, double c21, double c22)
+        {
+            map[0][0] = a00;
+            map[0][1] = a01;
+            map[0][2] = a02;
+
+            map[1][0] = b10;
+            map[1][1] = b11;
+            map[1][2] = b12;
+
+            map[2][0] = c20;
+            map[2][1] = c21;
+            map[2][2] = c22;
+        }
+
+        inline friend std::ostream &operator<<(std::ostream &out, const Matrix3D &map);
+
+        double *operator[](short row)
+        {
+            return map[row];
+        }
+
+        const double *operator[](short row) const
+        {
+            return map[row];
+        }
+
+    private:
+        double map[3][3];
+    };
+
+    inline std::ostream &operator<<(std::ostream &out, const Matrix3D &mat)
+    {
+        std::cout << "Matrix3D[" << mat.map[0][0] << " " << mat.map[0][1] << " " << mat.map[0][2] << "\n"
+                  << "         " << mat.map[1][0] << " " << mat.map[1][1] << " " << mat.map[1][2] << "\n"
+                  << "         " << mat.map[2][0] << " " << mat.map[2][1] << " " << mat.map[2][2] << "]" << std::endl;
+
+        return out;
+    }
+
+    static inline Matrix3D operator+(const Matrix3D &A, const Matrix3D &B)
+    {
+        return Matrix3D(A[0][0] + B[0][0], A[0][1] + B[0][1], A[0][2] + B[0][2],
+                        A[1][0] + B[1][0], A[1][1] + B[1][1], A[1][2] + B[1][2],
+                        A[2][0] + B[2][0], A[2][1] + B[2][1], A[2][2] + B[2][2]);
+    }
+
+    static inline Matrix3D operator-(const Matrix3D &A, const Matrix3D &B)
+    {
+        return Matrix3D(A[0][0] - B[0][0], A[0][1] - B[0][1], A[0][2] - B[0][2],
+                        A[1][0] - B[1][0], A[1][1] - B[1][1], A[1][2] - B[1][2],
+                        A[2][0] - B[2][0], A[2][1] - B[2][1], A[2][2] - B[2][2]);
+    }
+
+    static inline Matrix3D operator*(const Matrix3D &A, const Matrix3D &B)
+    {
+        return Matrix3D(A[0][0] * B[0][0] + A[0][1] * B[1][0] + A[0][2] * B[2][0],
+                        A[0][0] * B[0][1] + A[0][1] * B[1][1] + A[0][2] * B[2][1],
+                        A[0][0] * B[0][2] + A[0][1] * B[1][2] + A[0][2] * B[2][2],
+
+                        A[1][0] * B[0][0] + A[1][1] * B[1][0] + A[1][2] * B[2][0],
+                        A[1][0] * B[0][1] + A[1][1] * B[1][1] + A[1][2] * B[2][1],
+                        A[1][0] * B[0][2] + A[1][1] * B[1][2] + A[1][2] * B[2][2],
+
+                        A[2][0] * B[0][0] + A[2][1] * B[1][0] + A[2][2] * B[2][0],
+                        A[2][0] * B[0][1] + A[2][1] * B[1][1] + A[2][2] * B[2][1],
+                        A[2][0] * B[0][2] + A[2][1] * B[1][2] + A[2][2] * B[2][2]);
+    }
+    static inline Vector3D operator*(const Matrix3D &M, const Vector3D &v)
+    {
+        return (Vector3D(M[0][0] * v[0] + M[0][1] * v[1] + M[0][2] * v[2],
+                         M[1][0] * v[0] + M[1][1] * v[1] + M[1][2] * v[2],
+                         M[2][0] * v[0] + M[2][1] * v[1] + M[2][2] * v[2]));
+    }
+
+    // Calculate the determinant of a 3x3 matrix
+    static inline double determinant(const Matrix3D &A)
+    {
+        return A[0][0] * (A[1][1] * A[2][2] - A[1][2] * A[2][1]) -
+               A[0][1] * (A[1][0] * A[2][2] - A[1][2] * A[2][0]) +
+               A[0][2] * (A[1][0] * A[2][1] - A[1][1] * A[2][0]);
+    }
+
+    // Calculate the inverse of a 3x3 matrix
+    static inline Matrix3D inverse(const Matrix3D &A)
+    {
+        double det = determinant(A);
+
+        // Check if the matrix is invertible
+        if (std::abs(det) < 1e-8)
+        {
+            std::cerr << "Error: Matrix is not invertible." << std::endl;
+            return Matrix3D(1.0); // return identity matrix.
+        }
+
+        double invDet = 1.0 / det;
+
+        double a00 = (A[1][1] * A[2][2] - A[1][2] * A[2][1]) * invDet;
+        double a01 = (A[0][2] * A[2][1] - A[0][1] * A[2][2]) * invDet;
+        double a02 = (A[0][1] * A[1][2] - A[0][2] * A[1][1]) * invDet;
+
+        double b10 = (A[1][2] * A[2][0] - A[1][0] * A[2][2]) * invDet;
+        double b11 = (A[0][0] * A[2][2] - A[0][2] * A[2][0]) * invDet;
+        double b12 = (A[0][2] * A[1][0] - A[0][0] * A[1][2]) * invDet;
+
+        double c20 = (A[1][0] * A[2][1] - A[1][1] * A[2][0]) * invDet;
+        double c21 = (A[0][1] * A[2][0] - A[0][0] * A[2][1]) * invDet;
+        double c22 = (A[0][0] * A[1][1] - A[0][1] * A[1][0]) * invDet;
+
+        return Matrix3D(a00, a01, a02, b10, b11, b12, c20, c21, c22);
+    }
+}
+
+#endif
